@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pulseboard-db-init
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: db-init
+          image: postgres:16
+          command: ["psql"]
+          args:
+            - "postgresql://pulseboard_user:pulseboard_pass@pulseboard-db:5432/pulseboard_db"
+            - "-c"
+            - "CREATE TABLE IF NOT EXISTS migration_log (id SERIAL PRIMARY KEY, applied_at TIMESTAMP DEFAULT NOW());"

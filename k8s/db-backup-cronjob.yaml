@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pulseboard-db-backup
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: db-backup
+              image: postgres:16
+              command: ["sh", "-c"]
+              args:
+                - "echo \"Backup simulated at $(date)\" && psql postgresql://pulseboard_user:pulseboard_pass@pulseboard-db:5432/pulseboard_db -c 'SELECT NOW();'"

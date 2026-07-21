@@ -1,0 +1,29 @@
+services:
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://pulseboard_user:pulseboard_pass@db:5432/pulseboard_db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: pulseboard_user
+      POSTGRES_PASSWORD: pulseboard_pass
+      POSTGRES_DB: pulseboard_db
+    volumes:
+      - pulseboard_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulseboard_user -d pulseboard_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pulseboard_data:
