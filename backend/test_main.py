@@ -27,3 +27,10 @@ def test_health_check_response_has_no_extra_fields():
 def test_nonexistent_route_returns_404():
     response = client.get("/this-route-does-not-exist")
     assert response.status_code == 404
+
+
+def test_db_check_reports_connected():
+    response = client.get("/db-check")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["database"] == "connected"

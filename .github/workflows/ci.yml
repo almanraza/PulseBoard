@@ -10,6 +10,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: pulseboard_user
+          POSTGRES_PASSWORD: pulseboard_pass
+          POSTGRES_DB: pulseboard_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,6 +41,8 @@ jobs:
 
       - name: Run tests
         working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql://pulseboard_user:pulseboard_pass@localhost:5432/pulseboard_db
         run: |
           pytest -v
 
