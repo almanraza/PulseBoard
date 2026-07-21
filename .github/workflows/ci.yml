@@ -24,10 +24,10 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run a basic import check
+      - name: Run tests
         working-directory: ./backend
         run: |
-          python -c "from main import app; print('App imported successfully')"
+          pytest -v
 
   build-docker-image:
     runs-on: ubuntu-latest
