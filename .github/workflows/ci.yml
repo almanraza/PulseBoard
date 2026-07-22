@@ -72,3 +72,14 @@ jobs:
           docker build -t $IMAGE:${{ github.sha }} -t $IMAGE:latest .
           docker push $IMAGE:${{ github.sha }}
           docker push $IMAGE:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy to Kubernetes
+        run: |
+          echo "This step will run: kubectl set image deployment/pulseboard-api pulseboard-api=ghcr.io/${{ github.repository_owner }}/pulseboard-api:${{ github.sha }}"
+          echo "Once a real, reachable cluster (AWS EKS) is configured with credentials, this becomes a real deployment."
